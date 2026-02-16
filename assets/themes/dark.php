@@ -19,7 +19,7 @@ return [
     'help_category'         => ['fg' => Color::YELLOW],
     'help_usage'            => ['fg' => Color::WHITE, 'bold' => 1],
     'help_description_even' => ['fg' => Color::WHITE],
-    'help_description_odd'  => ['fg' => Color::GRAY],
+    'help_description_odd'  => ['fg' => Color::WHITE],
     'help_summary'          => ['fg' => Color::WHITE],
     'help_example'          => ['fg' => Color::GRAY],
     'help_text'             => ['fg' => Color::WHITE],

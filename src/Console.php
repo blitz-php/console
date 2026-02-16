@@ -364,7 +364,7 @@ class Console extends Application
      *
      * @throws InvalidCommandException If command is not valid
      */
-    public function addCommand(string $className): void
+    public function addCommand(string $className): self
     {
         $class = new ReflectionClass($className);
 
@@ -375,6 +375,34 @@ class Console extends Application
         /** @var Command $instance */
         $instance = $this->container !== null ? $this->container->make($className) : $class->newInstance();
 
+        return $this->addCommandInstance($instance);
+    }
+
+    /**
+     * Add a command instance to the console.
+     *
+     * This method allows adding a fully instantiated command object,
+     * which is useful for commands with complex constructor dependencies
+     * or when you need to configure the command before registration.
+     *
+     * @param Command $instance The command instance to add
+     *
+     * @return self The current instance for method chaining
+     *
+     * @example
+     * ```php
+     * // Command with dependencies
+     * $command = new DatabaseCommand($db, $logger);
+     * $console->addCommandInstance($command);
+     *
+     * // Pre-configured command
+     * $command = new CustomCommand();
+     * $command->setEnvironment('production');
+     * $console->addCommandInstance($command);
+     * ```
+     */
+    public function addCommandInstance(Command $instance): self
+    {
         $command = $instance->initialize($this);
 
         $app    = $this;
@@ -399,13 +427,15 @@ class Console extends Application
             return $result;
         };
 
-        $this->_commands[$className] = [
+        $this->_commands[get_class($instance)] = [
             'action' => $action,
             'name'   => $instance->name(),
             'alias'  => $instance->alias(),
         ];
 
         $this->add($command->action($action));
+
+        return $this;
     }
 
     /**

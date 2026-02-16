@@ -570,6 +570,36 @@ class Application
     }
 
     /**
+     * Add multiple instances of command to the console application.
+     *
+     * This method registers one or more command classes with the application.
+     * Each command class must extend the `Command` base class.
+     *
+     * @param list<Command> $commands Array of command instances
+     *
+     * @return self The current instance
+     *
+     * @throws InvalidCommandException If any command class is invalid
+     *
+     * @example
+     * ```php
+     * $app->withCommandInstances([
+     *     new MakeControllerCommand(),
+     *     new MakeModelCommand($db),
+     *     new ServeCommand($dependencies),
+     * ]);
+     * ```
+     */
+    public function withCommandInstances(array $commands): self
+    {
+        foreach ($commands as $command) {
+            $this->app->addCommandInstance($command);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set the default command to execute when no command is specified.
      *
      * This method allows you to define a default command that will be executed

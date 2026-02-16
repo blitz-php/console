@@ -129,6 +129,14 @@ class Application
         return $this->app->handle($argv);
     }
 
+	/**
+	 * Get the console
+	 */
+	public function getConsole(): Console
+	{
+		return $this->app;
+	}
+
     /**
      * Set the application locale.
      *

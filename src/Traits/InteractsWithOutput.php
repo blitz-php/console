@@ -219,9 +219,7 @@ trait InteractsWithOutput
      */
     public function json($data): self
     {
-        $this->write(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), true);
-
-        return $this;
+        return $this->write(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))->eol();
     }
 
     /**
@@ -281,10 +279,42 @@ trait InteractsWithOutput
      */
     public function justify(string $first, ?string $second = '', array $options = []): self
     {
-        $this->writer->justify($first, $second, $options);
+        $second = trim($second);
+        $first  = trim($first);
 
-        return $this;
+        $start = $first;
+        $end   = $second;
+
+        $options = [
+            'first'  => $options['first'] ?? [],
+            'second' => ($options['second'] ?? []) + ['bold' => 1],
+            'sep'    => (string) ($options['sep'] ?? '.'),
+        ];
+
+        if (preg_match('/(\\x1b(?:.+)m)/U', $first, $matches)) {
+            $first = str_replace($matches[1], '', $first);
+            $first = preg_replace('/\\x1b\[0m/', '', $first);
+        }
+        if (preg_match('/(\\x1b(?:.+)m)/U', $second, $matches)) {
+            $second = str_replace($matches[1], '', $second);
+            $second = preg_replace('/\\x1b\[0m/', '', $second);
+        }
+
+        $firstLength  = strlen($first);
+        $secondLength = strlen($second);
+
+        $dashWidth = ($this->terminal->width() ?: 100) - ($firstLength + $secondLength);
+        $dashWidth -= $second === '' ? 1 : 2;
+        $dashWidth = $dashWidth < 0 ? 0 : $dashWidth;
+
+        $first = $this->color->line($start, $options['first']);
+        if ($second !== '') {
+            $second = $this->color->line($end, $options['second']);
+        }
+
+        return $this->write($first . ' ' . str_repeat($options['sep'], $dashWidth) . ' ' . $second)->eol();
     }
+
 
     /**
      * Initialize a progress bar.

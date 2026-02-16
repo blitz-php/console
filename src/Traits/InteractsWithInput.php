@@ -122,7 +122,7 @@ trait InteractsWithInput
         $this->writer->question($question)->eol();
 
         foreach ($choices as $key => $value) {
-            $this->writer->choice(str_pad("  [{$key}]", 6))->answer($value)->eol();
+            $this->writer->choice(str_pad("  [{$key}] ", 6))->answer($value)->eol();
         }
 
         $choice = $this->prompt(t('Choice'));
@@ -145,7 +145,7 @@ trait InteractsWithInput
         $this->writer->question($question)->eol();
 
         foreach ($choices as $key => $value) {
-            $this->writer->choice(str_pad("  [{$key}]", 6))->answer($value)->eol();
+            $this->writer->choice(str_pad("  [{$key}] ", 6))->answer($value)->eol();
         }
 
         $choice = $this->prompt(t('Choices (comma separated)'));

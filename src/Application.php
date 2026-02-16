@@ -130,6 +130,14 @@ class Application
     }
 
     /**
+     * Get the console
+     */
+    public function getConsole(): Console
+    {
+        return $this->app;
+    }
+
+    /**
      * Set the application locale.
      *
      * Loads built-in translations for the specified locale if available.

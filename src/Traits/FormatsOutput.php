@@ -47,7 +47,15 @@ trait FormatsOutput
      */
     public function info(string $message): self
     {
-        $this->writer->info($message)->eol();
+        return $this->iinfo($message)->eol();
+    }
+
+    /**
+     * Write an informational message inline
+     */
+    public function iinfo(string $message): self
+    {
+        $this->writer->info($message, false);
 
         return $this;
     }
@@ -59,7 +67,17 @@ trait FormatsOutput
      */
     public function success(string $message): self
     {
-        $this->writer->ok($message)->eol();
+        return $this->isuccess($message)->eol();
+    }
+
+    /**
+     * Write a success message inline.
+     *
+     * @param string $message Success message
+     */
+    public function isuccess(string $message): self
+    {
+        $this->writer->ok($message, false);
 
         return $this;
     }
@@ -71,7 +89,17 @@ trait FormatsOutput
      */
     public function warn(string $message): self
     {
-        $this->writer->warn($message)->eol();
+        return $this->iwarn($message)->eol();
+    }
+
+    /**
+     * Write a warning message inline.
+     *
+     * @param string $message Warning message
+     */
+    public function iwarn(string $message): self
+    {
+        $this->writer->warn($message, false);
 
         return $this;
     }
@@ -87,13 +115,33 @@ trait FormatsOutput
     }
 
     /**
+     * Write a warning message inline (alias for warn).
+     *
+     * @param string $message Warning message
+     */
+    public function iwarning(string $message): self
+    {
+        return $this->iwarn($message);
+    }
+
+    /**
      * Write an error message.
      *
      * @param string $message Error message
      */
     public function error(string $message): self
     {
-        $this->writer->error($message)->eol();
+        return $this->ierror($message)->eol();
+    }
+
+    /**
+     * Write an error message inline.
+     *
+     * @param string $message Error message
+     */
+    public function ierror(string $message): self
+    {
+        $this->writer->error($message, false);
 
         return $this;
     }
@@ -105,7 +153,17 @@ trait FormatsOutput
      */
     public function comment(string $message): self
     {
-        $this->writer->comment($message)->eol();
+        return $this->icomment($message)->eol();
+    }
+
+    /**
+     * Write a comment message inline.
+     *
+     * @param string $message Comment message
+     */
+    public function icomment(string $message): self
+    {
+        $this->writer->comment($message, false);
 
         return $this;
     }
@@ -117,7 +175,17 @@ trait FormatsOutput
      */
     public function question(string $message): self
     {
-        $this->writer->question($message)->eol();
+        return $this->iquestion($message)->eol();
+    }
+
+    /**
+     * Write a question message inline.
+     *
+     * @param string $message Question message
+     */
+    public function iquestion(string $message): self
+    {
+        $this->writer->question($message, false);
 
         return $this;
     }
@@ -129,7 +197,17 @@ trait FormatsOutput
      */
     public function ok(string $message): self
     {
-        $this->writer->ok($message)->eol();
+        return $this->iok($message)->eol();
+    }
+
+    /**
+     * Write an OK message inline.
+     *
+     * @param string $message OK message
+     */
+    public function iok(string $message): self
+    {
+        $this->writer->ok($message, false);
 
         return $this;
     }
@@ -444,23 +522,6 @@ trait FormatsOutput
         foreach ($items as $index => $item) {
             $this->writer->colors(sprintf('  <green>%d.</end> %s', $index + 1, $item))->eol();
         }
-
-        return $this;
-    }
-
-    /**
-     * Display an alert message.
-     *
-     * @param string $message Alert message
-     * @param string $color   Alert color
-     */
-    public function alertMessage(string $message, string $color = 'yellow'): self
-    {
-        $this->newLine();
-        $this->colorize(str_repeat('*', \strlen($message) + 12), $color);
-        $this->colorize('*     ' . $message . '     *', $color);
-        $this->colorize(str_repeat('*', \strlen($message) + 12), $color);
-        $this->newLine();
 
         return $this;
     }

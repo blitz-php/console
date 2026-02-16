@@ -15,7 +15,7 @@ return [
     'help_header'           => ['fg' => Color::GREEN],
     'help_item_even'        => ['fg' => Color::GREEN],
     'help_item_odd'         => ['fg' => Color::GREEN],
-    'help_group'            => ['fg' => Color::fg256(49)],
+    'help_group'            => ['fg' => Color::fg256(149)],
     'help_category'         => ['fg' => Color::YELLOW],
     'help_usage'            => ['fg' => Color::WHITE],
     'help_description_even' => ['fg' => Color::WHITE],

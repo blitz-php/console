@@ -200,17 +200,22 @@ class Alert
     {
         $this->writer->eol();
 
+        // Calculate the total le,gth of border
+        $iconLength  = $icon ? 2 : 0; // Icon + space
+        $titleLength = strlen($title) + $iconLength;
+        $maxLength   = max(strlen($message), $titleLength + 2) + 12;
+
         // Top border
-        $this->renderBorder($message, $type, $title, $icon);
+        $this->renderBorder($maxLength, $type);
 
         // Title line with icon
-        $this->renderTitle($title, $type, $icon);
+        $this->renderTitle($title, $type, $icon, $maxLength);
 
         // Message line
-        $this->renderMessage($message, $type);
+        $this->renderMessage($message, $type, $maxLength);
 
         // Bottom border
-        $this->renderBorder($message, $type, $title, $icon);
+        $this->renderBorder($maxLength, $type);
 
         $this->writer->eol();
 
@@ -220,17 +225,12 @@ class Alert
     /**
      * Render alert border.
      *
-     * @param string      $message Message for length calculation
-     * @param string      $type    Alert type
-     * @param string      $title   Alert title
-     * @param string|null $icon    Optional icon
+     * @param int    $maxLength Maximum length of the border
+     * @param string $type      Alert type
      */
-    private function renderBorder(string $message, string $type, string $title, ?string $icon): void
+    private function renderBorder(int $maxLength, string $type): void
     {
-        $iconLength  = $icon ? 2 : 0; // Icon + space
-        $titleLength = strlen($title) + $iconLength;
-        $length      = max(strlen($message), $titleLength + 2) + 12;
-        $border      = str_repeat('*', $length);
+        $border = str_repeat('*', $maxLength);
 
         $this->writer->colors('<' . $this->getBorderColor($type) . '>' . $border . '</end>')->eol();
     }
@@ -242,15 +242,32 @@ class Alert
      * @param string      $type  Alert type
      * @param string|null $icon  Optional icon
      */
-    private function renderTitle(string $title, string $type, ?string $icon): void
+    private function renderTitle(string $title, string $type, ?string $icon, int $maxLength): void
     {
-        $iconPart     = $icon ? $icon . ' ' : '';
+        $iconPart     = $icon ? $icon . '  ' : '';
         $displayTitle = $iconPart . $title;
 
-        $padding        = 6;
-        $formattedTitle = str_pad('*  ' . $displayTitle . '  *', $padding * 2 + strlen($displayTitle) + 4, ' ', STR_PAD_BOTH);
+        // Calculate the left part of the border (before the title)
+        $rightBorderLength = $icon ? 1 : -1;
+        $titleWithSpaces   = '  ' . $displayTitle . '  ';
+        $titleTotalLength  = strlen($titleWithSpaces);
 
-        $this->writer->colors('<' . $this->getTitleColor($type) . '>' . $formattedTitle . '</end>')->eol();
+        // Calculate how many asterisks after the title
+        $remainingLength = $maxLength - $titleTotalLength + $rightBorderLength;
+
+        if ($remainingLength >= 2) {
+            // Construction of the top border: "*  TITLE  ********"
+            $topBorder = '*  ' . $displayTitle . '  ' . str_repeat('*', $remainingLength);
+            $this->writer->colors('<' . $this->getBorderColor($type) . '>' . $topBorder . '</end>')->eol();
+        } else {
+            // If there is not enough space, use the traditional method.
+            $border = str_repeat('*', $maxLength);
+            $this->writer->colors('<' . $this->getBorderColor($type) . '>' . $border . '</end>')->eol();
+
+            // Then display the title on the next line
+            $formattedTitle = str_pad('*  ' . $displayTitle . '  *', $maxLength, ' ', STR_PAD_RIGHT);
+            $this->writer->colors('<' . $this->getTitleColor($type) . '>' . $formattedTitle . '</end>')->eol();
+        }
     }
 
     /**
@@ -259,12 +276,16 @@ class Alert
      * @param string $message Alert message
      * @param string $type    Alert type
      */
-    private function renderMessage(string $message, string $type): void
+    private function renderMessage(string $message, string $type, int $maxLength): void
     {
         $lines = explode("\n", wordwrap($message, 60, "\n", true));
 
         foreach ($lines as $line) {
-            $paddedLine = str_pad('*  ' . $line . '  *', strlen($line) + 10, ' ', STR_PAD_RIGHT);
+            // Calculate the padding needed for the message to be aligned with the border
+            $paddedLine    = '*  ' . $line;
+            $paddingNeeded = $maxLength - strlen($paddedLine);
+            $paddedLine .= str_repeat(' ', max(0, $paddingNeeded)) . ' *';
+
             $this->writer->colors('<' . $this->getMessageColor($type) . '>' . $paddedLine . '</end>')->eol();
         }
     }

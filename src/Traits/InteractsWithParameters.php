@@ -126,8 +126,30 @@ trait InteractsWithParameters
      */
     public function parameter(string $key, mixed $default = null): mixed
     {
-        $params = array_merge($this->parameters['arguments'], $this->parameters['options']);
+        $params = $this->parameters();
 
         return $params[$key] ?? $default;
+    }
+
+    /**
+     * Get all command parameters.
+     *
+     * @return array<string, mixed> Command parameters
+     */
+    public function parameters(): array
+    {
+        return array_merge($this->parameters['arguments'], $this->parameters['options']);
+    }
+
+    /**
+     * Check if an parameter exists.
+     *
+     * @param string $name Parameter name
+     *
+     * @return bool True if parameter exists, false otherwise
+     */
+    public function hasParameter(string $name): bool
+    {
+        return isset($this->parameters['arguments'][$name]) || isset($this->parameters['options'][$name]);
     }
 }

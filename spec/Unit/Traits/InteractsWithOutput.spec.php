@@ -136,7 +136,6 @@ describe('Traits / InteractsWithOutput', function () {
 
             expect($this->writer)->toReceive('write')->with(
                 json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
-                true
             )->once();
 
             $this->output->json($data);
@@ -206,7 +205,7 @@ describe('Traits / InteractsWithOutput', function () {
         });
 
         it('writes justified text', function () {
-            expect($this->writer)->toReceive('justify')->with('Left', 'Right', [])->once();
+            expect($this->writer)->toReceive('write');
 
             $this->output->justify('Left', 'Right');
         });

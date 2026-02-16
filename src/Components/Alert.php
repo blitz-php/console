@@ -258,7 +258,7 @@ class Alert
         if ($remainingLength >= 2) {
             // Construction of the top border: "*  TITLE  ********"
             $topBorder = '*  ' . $displayTitle . '  ' . str_repeat('*', $remainingLength);
-            $this->writer->colors('<' . $this->getBorderColor($type) . '>' . $topBorder . '</end>')->eol();
+            $this->writer->colors('<' . $this->getTitleColor($type) . '>' . $topBorder . '</end>')->eol();
         } else {
             // If there is not enough space, use the traditional method.
             $border = str_repeat('*', $maxLength);

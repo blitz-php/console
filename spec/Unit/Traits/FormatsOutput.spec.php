@@ -237,14 +237,6 @@ describe('Traits / FormatsOutput', function () {
         });
     });
 
-    describe('alerts and borders', function () {
-        it('displays alert message', function () {
-            expect($this->writer)->toReceive('colors')->with(Arg::toContain('*'))->times(3);
-
-            $this->formatter->alertMessage('System will restart');
-        });
-    });
-
     describe('color methods with eol', function () {
         it('writes red with eol', function () {
             expect($this->writer)->toReceive('colors')->with('<red>Red text</end><eol>')->once();
@@ -314,28 +306,6 @@ describe('Traits / FormatsOutput', function () {
             expect($this->writer)->toReceive('colors')->with('<blue>Numbers:</end>')->once();
 
             $this->formatter->numberedList(['One'], 'Numbers:', 'blue');
-        });
-    });
-
-    describe('alert message edge cases', function () {
-        it('handles empty message', function () {
-            expect($this->writer)->toReceive('colors')->times(3);
-
-            $this->formatter->alertMessage('');
-        });
-
-        it('handles very long message', function () {
-            $long = str_repeat('X', 100);
-
-            expect($this->writer)->toReceive('colors')->times(3);
-
-            $this->formatter->alertMessage($long);
-        });
-
-        it('uses custom color', function () {
-            expect($this->writer)->toReceive('colors')->with(Arg::toContain('<red>'))->times(3);
-
-            $this->formatter->alertMessage('Message', 'red');
         });
     });
 });

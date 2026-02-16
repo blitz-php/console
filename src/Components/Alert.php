@@ -201,9 +201,9 @@ class Alert
         $this->writer->eol();
 
         // Calculate the total le,gth of border
-        $iconLength = $icon ? 2 : 0; // Icon + space
+        $iconLength  = $icon ? 2 : 0; // Icon + space
         $titleLength = strlen($title) + $iconLength;
-        $maxLength = max(strlen($message), $titleLength + 2) + 12;
+        $maxLength   = max(strlen($message), $titleLength + 2) + 12;
 
         // Top border
         $this->renderBorder($maxLength, $type);
@@ -226,7 +226,7 @@ class Alert
      * Render alert border.
      *
      * @param int    $maxLength Maximum length of the border
-     * @param string $type    Alert type
+     * @param string $type      Alert type
      */
     private function renderBorder(int $maxLength, string $type): void
     {
@@ -249,8 +249,8 @@ class Alert
 
         // Calculate the left part of the border (before the title)
         $rightBorderLength = $icon ? 1 : -1;
-        $titleWithSpaces = '  ' . $displayTitle . '  ';
-        $titleTotalLength = strlen($titleWithSpaces);
+        $titleWithSpaces   = '  ' . $displayTitle . '  ';
+        $titleTotalLength  = strlen($titleWithSpaces);
 
         // Calculate how many asterisks after the title
         $remainingLength = $maxLength - $titleTotalLength + $rightBorderLength;
@@ -282,7 +282,7 @@ class Alert
 
         foreach ($lines as $line) {
             // Calculate the padding needed for the message to be aligned with the border
-            $paddedLine = '*  ' . $line;
+            $paddedLine    = '*  ' . $line;
             $paddingNeeded = $maxLength - strlen($paddedLine);
             $paddedLine .= str_repeat(' ', max(0, $paddingNeeded)) . ' *';
 

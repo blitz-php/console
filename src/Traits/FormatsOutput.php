@@ -50,15 +50,15 @@ trait FormatsOutput
         return $this->iinfo($message)->eol();
     }
 
-	/**
-	 * Write an informational message inline
-	 */
-	public function iinfo(string $message): self
-	{
-		$this->writer->info($message, false);
+    /**
+     * Write an informational message inline
+     */
+    public function iinfo(string $message): self
+    {
+        $this->writer->info($message, false);
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Write a success message.
@@ -92,7 +92,7 @@ trait FormatsOutput
         return $this->iwarn($message)->eol();
     }
 
-	/**
+    /**
      * Write a warning message inline.
      *
      * @param string $message Warning message
@@ -134,7 +134,7 @@ trait FormatsOutput
         return $this->ierror($message)->eol();
     }
 
-	/**
+    /**
      * Write an error message inline.
      *
      * @param string $message Error message

@@ -315,7 +315,6 @@ trait InteractsWithOutput
         return $this->write($first . ' ' . str_repeat($options['sep'], $dashWidth) . ' ' . $second)->eol();
     }
 
-
     /**
      * Initialize a progress bar.
      *

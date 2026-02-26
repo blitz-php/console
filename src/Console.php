@@ -472,10 +472,14 @@ class Console extends Application
      */
     protected function onError(Throwable $e, int $exitCode): void
     {
-        $this->io()->error($e->getMessage(), true);
+        if ($this->logger['instance'] !== null) {
+            $this->logger['instance']->error('[' . $this->name() . '] ' . $e->getMessage(), ['exception' => $e]);
+        }
 
         if ($this->flags['debug']) {
-            $this->io()->error($e->getTraceAsString(), true);
+            $this->outputHelper()->printTrace($e);
+        } else {
+            $this->io()->error($e->getMessage(), true);
         }
 
         exit($exitCode);

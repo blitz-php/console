@@ -473,7 +473,10 @@ class Console extends Application
     protected function onError(Throwable $e, int $exitCode): void
     {
         if ($this->logger['instance'] !== null) {
-            $this->logger['instance']->error('[' . $this->name() . '] ' . $e->getMessage(), ['exception' => $e]);
+            $name = $this->name() ?: 'console';
+            $name .= $this->logger['prefix'] ? ' > ' . $this->logger['prefix'] : '';
+
+            $this->logger['instance']->error('[' . $name . '] ' . $e->getMessage(), ['exception' => $e]);
         }
 
         if ($this->flags['debug']) {

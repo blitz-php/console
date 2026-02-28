@@ -2,6 +2,16 @@
 
 Toutes les modifications notables apportées à `console` seront documentées dans ce fichier.
 
+## 0.10.1 - 2026-02-28
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+### What's Changed
+
+* improve error handling and logging in onError method by @dimtrovich in https://github.com/dimtrovich/php-console/pull/12
+* patch: add kebabize method and update argument/options handling to support kebab-case by @dimtrovich in https://github.com/dimtrovich/php-console/pull/13
+
+**Full Changelog**: https://github.com/dimtrovich/php-console/compare/0.10.0...0.10.1
+
 ## 0.10.0 - 2026-02-16
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

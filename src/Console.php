@@ -416,6 +416,7 @@ class Console extends Application
             foreach ($arguments as $key => $value) {
                 $arguments[$app->kebabize($key)] = $value;
             }
+
             foreach ($options as $key => $value) {
                 $options[$app->kebabize($key)] = $value;
             }

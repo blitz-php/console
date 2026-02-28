@@ -412,7 +412,14 @@ class Console extends Application
             $parameters = $command->values();
             $arguments  = $arguments === [] || $arguments === null ? $command->args() : $arguments;
             $options    = $options === []   || $options === null ? array_diff_key($parameters, $arguments) : $options;
-            $parameters = array_merge($options, $arguments);
+
+            foreach ($arguments as $key => $value) {
+                $arguments[$app->kebabize($key)] = $value;
+            }
+
+            foreach ($options as $key => $value) {
+                $options[$app->kebabize($key)] = $value;
+            }
 
             $instance->setParameters($arguments, $options);
 
@@ -589,5 +596,17 @@ class Console extends Application
             'arguments' => $arguments,
             'options'   => $options,
         ]));
+    }
+
+    /**
+     * Converts a CamelCase name to kebab-case.
+     *
+     * When an option or argument "--my-option" is defined,
+     * Ahc/cli returns it in camelcase (myOption),
+     * but we want it in kebabcase so we can use $this->option("my-option").
+     */
+    protected function kebabize(string $input): string
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $input));
     }
 }

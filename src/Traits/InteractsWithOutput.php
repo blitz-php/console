@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Dimtrovich\Console\Traits;
 
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Terminal;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
@@ -38,6 +39,7 @@ use function Ahc\Cli\t;
 trait InteractsWithOutput
 {
     use FormatsOutput;
+    use InflectsString;
 
     /**
      * Get the Alert component instance.
@@ -232,7 +234,7 @@ trait InteractsWithOutput
     {
         $length = $length ?: ($this->terminal->width() ?: 100);
         $str    = str_repeat($char, $length);
-        $str    = substr($str, 0, $length);
+        $str    = $this->substr($str, 0, $length);
 
         return $this->comment($str);
     }
@@ -260,7 +262,7 @@ trait InteractsWithOutput
         $sep = $options['sep'] ?? ' ';
         unset($options['sep']);
 
-        $dashWidth = ($this->terminal->width() ?: 100) - \strlen($text);
+        $dashWidth = ($this->terminal->width() ?: 100) - $this->strwidth($text);
         $dashWidth -= 2;
         $dashWidth = (int) ($dashWidth / 2);
 
@@ -291,17 +293,18 @@ trait InteractsWithOutput
             'sep'    => (string) ($options['sep'] ?? '.'),
         ];
 
-        if (preg_match('/(\\x1b(?:.+)m)/U', $first, $matches)) {
+        while (preg_match('/(\\x1b(?:.+)m)/U', $first, $matches)) {
             $first = str_replace($matches[1], '', $first);
             $first = preg_replace('/\\x1b\[0m/', '', $first);
         }
-        if (preg_match('/(\\x1b(?:.+)m)/U', $second, $matches)) {
+
+        while (preg_match('/(\\x1b(?:.+)m)/U', $second, $matches)) {
             $second = str_replace($matches[1], '', $second);
             $second = preg_replace('/\\x1b\[0m/', '', $second);
         }
 
-        $firstLength  = strlen($first);
-        $secondLength = strlen($second);
+        $firstLength  = $this->strwidth($first);
+        $secondLength = $this->strwidth($second);
 
         $dashWidth = ($this->terminal->width() ?: 100) - ($firstLength + $secondLength);
         $dashWidth -= $second === '' ? 1 : 2;

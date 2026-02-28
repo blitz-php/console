@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Dimtrovich\Console\Components;
 
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Output\Writer;
 use Dimtrovich\Console\Icon;
 
@@ -23,6 +24,7 @@ class Alert
 {
     use IconTrait;
     use SingletonTrait;
+    use InflectsString;
 
     /**
      * Writer instance.
@@ -202,8 +204,8 @@ class Alert
 
         // Calculate the total le,gth of border
         $iconLength  = $icon ? 2 : 0; // Icon + space
-        $titleLength = strlen($title) + $iconLength;
-        $maxLength   = max(strlen($message), $titleLength + 2) + 12;
+        $titleLength = $this->strwidth($title) + $iconLength;
+        $maxLength   = max($this->strwidth($message), $titleLength + 2) + 12;
 
         // Top border
         $this->renderBorder($maxLength, $type);
@@ -250,7 +252,7 @@ class Alert
         // Calculate the left part of the border (before the title)
         $rightBorderLength = $icon ? 1 : -1;
         $titleWithSpaces   = '  ' . $displayTitle . '  ';
-        $titleTotalLength  = strlen($titleWithSpaces);
+        $titleTotalLength  = $this->strwidth($titleWithSpaces);
 
         // Calculate how many asterisks after the title
         $remainingLength = $maxLength - $titleTotalLength + $rightBorderLength;
@@ -283,7 +285,7 @@ class Alert
         foreach ($lines as $line) {
             // Calculate the padding needed for the message to be aligned with the border
             $paddedLine    = '*  ' . $line;
-            $paddingNeeded = $maxLength - strlen($paddedLine);
+            $paddingNeeded = $maxLength - $this->strwidth($paddedLine);
             $paddedLine .= str_repeat(' ', max(0, $paddingNeeded)) . ' *';
 
             $this->writer->colors('<' . $this->getMessageColor($type) . '>' . $paddedLine . '</end>')->eol();

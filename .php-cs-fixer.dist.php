@@ -42,5 +42,5 @@ return Factory::create(new Blitz(), $overrides, $options)->forLibrary(
     'Dimtrovich - Console',
     'Dimitri Sitchet Tomkeu',
     'devcode.dst@gmail.com',
-    2026
+    2026,
 );

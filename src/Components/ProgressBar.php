@@ -81,7 +81,7 @@ class ProgressBar extends AhcProgressBar
             t('Statistics'),
             $this->current,
             $elapsed,
-            $speed
+            $speed,
         ))->eol();
 
         if (! empty($this->messages)) {

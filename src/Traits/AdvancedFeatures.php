@@ -244,21 +244,21 @@ trait AdvancedFeatures
                 'completed'  => '✓',
                 'failed'     => '✗',
                 'processing' => '↻',
-                default      => '○'
+                default      => '○',
             };
 
             $color = match ($status) {
                 'completed'  => 'green',
                 'failed'     => 'red',
                 'processing' => 'yellow',
-                default      => 'gray'
+                default      => 'gray',
             };
 
             $this->writer->colors(sprintf(
                 '  <%s>%s</end> %s',
                 $color,
                 $icon,
-                $event['description'] ?? 'Event ' . ($index + 1)
+                $event['description'] ?? 'Event ' . ($index + 1),
             ))->eol();
         }
 

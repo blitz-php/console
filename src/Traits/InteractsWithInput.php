@@ -99,7 +99,7 @@ trait InteractsWithInput
         return $this->prompt($question, $default, function ($input) use ($choices) {
             if (! in_array($input, $choices, true)) {
                 throw new InvalidArgumentException(
-                    t('Value must be one of: %s', [implode(', ', $choices)])
+                    t('Value must be one of: %s', [implode(', ', $choices)]),
                 );
             }
 

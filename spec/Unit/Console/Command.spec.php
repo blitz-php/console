@@ -197,7 +197,7 @@ describe('Command', function () {
                 }
             };
 
-            $this->console->addCommand(get_class($command1));
+            $this->console->addCommand($command1::class);
             $result = $this->console->call('first');
 
             expect($result)->toBe(99);
@@ -213,7 +213,7 @@ describe('Command', function () {
                 }
             };
 
-            $this->console->addCommand(get_class($command1));
+            $this->console->addCommand($command1::class);
 
             // Pas d'exception = succès
             expect(function () {
@@ -231,7 +231,7 @@ describe('Command', function () {
                 }
             };
 
-            $this->console->addCommand(get_class($command));
+            $this->console->addCommand($command::class);
             $result = $this->console->call('checker');
 
             expect($result)->toBe(true);

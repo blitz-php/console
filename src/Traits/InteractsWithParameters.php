@@ -31,6 +31,13 @@ trait InteractsWithParameters
     private array $parameters = [];
 
     /**
+     * Cached merged parameters.
+     *
+     * @var array<string, mixed>
+     */
+    private array $cachedParameters = [];
+
+    /**
      * Define parameters received after command execution.
      *
      * @internal
@@ -44,6 +51,8 @@ trait InteractsWithParameters
             'arguments' => $arguments,
             'options'   => $options,
         ];
+
+        $this->cachedParameters = [];
     }
 
     /**
@@ -82,6 +91,81 @@ trait InteractsWithParameters
     }
 
     /**
+     * Check if any of the given arguments exist.
+     *
+     * @param string ...$names Argument names
+     *
+     * @return bool True if at least one argument exists, false otherwise
+     */
+    public function hasAnyArguments(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if ($this->hasArgument($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if all of the given arguments exist.
+     *
+     * @param string ...$names Argument names
+     *
+     * @return bool True if all arguments exist, false otherwise
+     */
+    public function hasAllArguments(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if (! $this->hasArgument($name)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if any of the given arguments are missing.
+     *
+     * @param string ...$names Argument names
+     *
+     * @return bool True if at least one argument is missing, false otherwise
+     */
+    public function missingAnyArguments(string ...$names): bool
+    {
+        return ! $this->hasAllArguments(...$names);
+    }
+
+    /**
+     * Check if all of the given arguments are missing.
+     *
+     * @param string ...$names Argument names
+     *
+     * @return bool True if all arguments are missing, false otherwise
+     */
+    public function missingAllArguments(string ...$names): bool
+    {
+        return ! $this->hasAnyArguments(...$names);
+    }
+
+    /**
+     * Merge additional arguments with existing ones.
+     *
+     * @param array<string, mixed> $arguments Arguments to merge
+     */
+    public function mergeArguments(array $arguments): void
+    {
+        $this->parameters['arguments'] = array_merge(
+            $this->parameters['arguments'],
+            $arguments
+        );
+
+        $this->cachedParameters = [];
+    }
+
+    /**
      * Get the value of a command option.
      *
      * @param string     $name    Option name
@@ -117,6 +201,81 @@ trait InteractsWithParameters
     }
 
     /**
+     * Check if any of the given options exist.
+     *
+     * @param string ...$names Option names
+     *
+     * @return bool True if at least one option exists, false otherwise
+     */
+    public function hasAnyOptions(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if ($this->hasOption($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if all of the given options exist.
+     *
+     * @param string ...$names Option names
+     *
+     * @return bool True if all options exist, false otherwise
+     */
+    public function hasAllOptions(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if (! $this->hasOption($name)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if any of the given options are missing.
+     *
+     * @param string ...$names Option names
+     *
+     * @return bool True if at least one option is missing, false otherwise
+     */
+    public function missingAnyOptions(string ...$names): bool
+    {
+        return ! $this->hasAllOptions(...$names);
+    }
+
+    /**
+     * Check if all of the given options are missing.
+     *
+     * @param string ...$names Option names
+     *
+     * @return bool True if all options are missing, false otherwise
+     */
+    public function missingAllOptions(string ...$names): bool
+    {
+        return ! $this->hasAnyOptions(...$names);
+    }
+
+    /**
+     * Merge additional options with existing ones.
+     *
+     * @param array<string, mixed> $options Options to merge
+     */
+    public function mergeOptions(array $options): void
+    {
+        $this->parameters['options'] = array_merge(
+            $this->parameters['options'],
+            $options
+        );
+
+        $this->cachedParameters = [];
+    }
+
+    /**
      * Get the value of a command argument or option.
      *
      * @param string     $key     Argument or option name
@@ -126,23 +285,32 @@ trait InteractsWithParameters
      */
     public function parameter(string $key, mixed $default = null): mixed
     {
-        $params = $this->parameters();
-
-        return $params[$key] ?? $default;
+        return $this->parameters['arguments'][$key]
+            ?? $this->parameters['options'][$key]
+            ?? $default;
     }
 
     /**
      * Get all command parameters.
      *
+     * Note: Arguments take precedence over options with the same name.
+     *
      * @return array<string, mixed> Command parameters
      */
     public function parameters(): array
     {
-        return array_merge($this->parameters['arguments'], $this->parameters['options']);
+        if ($this->cachedParameters === []) {
+            $this->cachedParameters = array_merge(
+                $this->parameters['arguments'],
+                $this->parameters['options']
+            );
+        }
+
+        return $this->cachedParameters;
     }
 
     /**
-     * Check if an parameter exists.
+     * Check if a parameter exists.
      *
      * @param string $name Parameter name
      *
@@ -150,6 +318,67 @@ trait InteractsWithParameters
      */
     public function hasParameter(string $name): bool
     {
-        return isset($this->parameters['arguments'][$name]) || isset($this->parameters['options'][$name]);
+        return isset($this->parameters['arguments'][$name])
+            || isset($this->parameters['options'][$name]);
+    }
+
+    /**
+     * Check if any of the given parameters exist.
+     *
+     * @param string ...$names Parameter names
+     *
+     * @return bool True if at least one parameter exists, false otherwise
+     */
+    public function hasAnyParameters(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if ($this->hasParameter($name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if all of the given parameters exist.
+     *
+     * @param string ...$names Parameter names
+     *
+     * @return bool True if all parameters exist, false otherwise
+     */
+    public function hasAllParameters(string ...$names): bool
+    {
+        foreach ($names as $name) {
+            if (! $this->hasParameter($name)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if any of the given parameters are missing.
+     *
+     * @param string ...$names Parameter names
+     *
+     * @return bool True if at least one parameter is missing, false otherwise
+     */
+    public function missingAnyParameters(string ...$names): bool
+    {
+        return ! $this->hasAllParameters(...$names);
+    }
+
+    /**
+     * Check if all of the given parameters are missing.
+     *
+     * @param string ...$names Parameter names
+     *
+     * @return bool True if all parameters are missing, false otherwise
+     */
+    public function missingAllParameters(string ...$names): bool
+    {
+        return ! $this->hasAnyParameters(...$names);
     }
 }

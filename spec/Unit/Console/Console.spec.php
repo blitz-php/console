@@ -48,7 +48,7 @@ describe('Console', function () {
                     }
                 };
 
-                $this->console->addCommand(get_class($command));
+                $this->console->addCommand($command::class);
 
                 expect($this->console->commandExists('test:command'))->toBe(true);
             });
@@ -64,7 +64,7 @@ describe('Console', function () {
                     }
                 };
 
-                $this->console->addCommand(get_class($command));
+                $this->console->addCommand($command::class);
 
                 expect($this->console->commandExists('t:a'))->toBe(true);
             });
@@ -81,8 +81,8 @@ describe('Console', function () {
                 $invalidClass = new class () {};
 
                 expect(function () use ($invalidClass) {
-                    $this->console->addCommand(get_class($invalidClass));
-                })->toThrow(new InvalidCommandException(get_class($invalidClass)));
+                    $this->console->addCommand($invalidClass::class);
+                })->toThrow(new InvalidCommandException($invalidClass::class));
             });
         });
     });
@@ -206,7 +206,7 @@ describe('Console', function () {
                     return 0;
                 }
             };
-            $this->console->addCommand(get_class($command));
+            $this->console->addCommand($command::class);
             $this->console->call('hook:before');
 
             expect($executed)->toBe(true);
@@ -226,7 +226,7 @@ describe('Console', function () {
                     return 0;
                 }
             };
-            $this->console->addCommand(get_class($command));
+            $this->console->addCommand($command::class);
             $this->console->call('hook:after');
 
             expect($executed)->toBe(true);

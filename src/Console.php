@@ -434,7 +434,7 @@ class Console extends Application
             return $result;
         };
 
-        $this->_commands[get_class($instance)] = [
+        $this->_commands[$instance::class] = [
             'action' => $action,
             'name'   => $instance->name(),
             'alias'  => $instance->alias(),

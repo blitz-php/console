@@ -39,7 +39,7 @@ describe('InteractsWithParameters', function () {
         beforeEach(function () {
             $this->params->exposeSetParameters(
                 ['id' => 123, 'name' => 'Product'],
-                ['verbose' => true]
+                ['verbose' => true],
             );
         });
 
@@ -69,7 +69,7 @@ describe('InteractsWithParameters', function () {
         beforeEach(function () {
             $this->params->exposeSetParameters(
                 ['id' => 123],
-                ['verbose' => true, 'env' => 'prod', 'debug' => false]
+                ['verbose' => true, 'env' => 'prod', 'debug' => false],
             );
         });
 
@@ -101,7 +101,7 @@ describe('InteractsWithParameters', function () {
         beforeEach(function () {
             $this->params->exposeSetParameters(
                 ['action' => 'create'],
-                ['force' => true, 'id' => 999]
+                ['force' => true, 'id' => 999],
             );
         });
 

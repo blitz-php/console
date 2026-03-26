@@ -150,7 +150,7 @@ describe('Components / Logger', function () {
             expect(function () {
                 $this->logger->undefinedMethod();
             })->toThrow(new BadMethodCallException(
-                'Call to undefined method "Dimtrovich\Console\Components\Logger::undefinedMethod".'
+                'Call to undefined method "Dimtrovich\Console\Components\Logger::undefinedMethod".',
             ));
         });
     });

@@ -9,6 +9,7 @@
  * the LICENSE file that was distributed with this source code.
  */
 
+use Ahc\Cli\Output\Writer;
 use Dimtrovich\Console\Traits\AsciiArt;
 
 use function Kahlan\expect;
@@ -56,9 +57,9 @@ describe('Traits / AsciiArt', function () {
             };
         },
         beforeEach: function ($files) {
-            $this->writer = new Ahc\Cli\Output\Writer($files[0]);
+            $this->writer = new Writer($files[0]);
             $this->art    = $this->getArt($this->writer);
-        }
+        },
     );
 
     describe('font management', function () {
@@ -89,7 +90,7 @@ describe('Traits / AsciiArt', function () {
             expect(function () {
                 $this->art->withFont('invalid');
             })->toThrow(new InvalidArgumentException(
-                'ASCII font "invalid" not found. Available fonts: standard, minimal'
+                'ASCII font "invalid" not found. Available fonts: standard, minimal',
             ));
         });
 
@@ -170,7 +171,7 @@ describe('Traits / AsciiArt', function () {
             expect(function () {
                 $this->art->asciiArt('TEST', 'invalid');
             })->toThrow(new InvalidArgumentException(
-                'ASCII font "invalid" not found. Available fonts: standard, minimal'
+                'ASCII font "invalid" not found. Available fonts: standard, minimal',
             ));
         });
     });

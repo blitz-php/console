@@ -11,8 +11,12 @@
 
 use BlitzPHP\Contracts\Container\ContainerInterface;
 use Dimtrovich\Console\Application;
+use Dimtrovich\Console\Command;
 use Dimtrovich\Console\Console;
 use Kahlan\Plugin\Double;
+use Psr\Log\LoggerInterface;
+use Tests\Fixtures\CommadOne;
+use Tests\Fixtures\CommadTwo;
 
 use function Kahlan\expect;
 
@@ -111,8 +115,8 @@ describe('Application', function () {
     describe('command registration', function () {
         it('registers multiple commands', function () {
             $commands = [
-                Tests\Fixtures\CommadOne::class,
-                Tests\Fixtures\CommadTwo::class,
+                CommadOne::class,
+                CommadTwo::class,
             ];
 
             $result = $this->app->withCommands($commands);
@@ -124,7 +128,7 @@ describe('Application', function () {
     describe('command execution', function () {
         beforeEach(function () {
             // Create a mock command for tests
-            $this->mockCommandClass = new class () extends Dimtrovich\Console\Command {
+            $this->mockCommandClass = new class () extends Command {
                 protected string $name        = 'test:command';
                 protected string $description = 'Test command';
 
@@ -151,7 +155,7 @@ describe('Application', function () {
             expect(function () {
                 $this->app->withTheme('invalid');
             })->toThrow(new InvalidArgumentException(
-                'Theme "invalid" not found. Available themes: default, light, dark, solarized, monokai, nord, dracula, github.'
+                'Theme "invalid" not found. Available themes: default, light, dark, solarized, monokai, nord, dracula, github.',
             ));
         });
 
@@ -199,7 +203,7 @@ describe('Application', function () {
 
     describe('logger configuration', function () {
         it('configures logger with withLogger()', function () {
-            $psrLogger = Double::instance(['implements' => [Psr\Log\LoggerInterface::class]]);
+            $psrLogger = Double::instance(['implements' => [LoggerInterface::class]]);
 
             $result = $this->app->withLogger($psrLogger, 'APP');
 
@@ -213,7 +217,7 @@ describe('Application', function () {
     describe('default command', function () {
         it('sets default command with withDefaultCommand()', function () {
             // Ajouter d'abord une commande
-            $command = new class () extends Dimtrovich\Console\Command {
+            $command = new class () extends Command {
                 protected string $name = 'test:default';
 
                 public function handle()
@@ -222,7 +226,7 @@ describe('Application', function () {
                 }
             };
 
-            $this->app->withCommands([get_class($command)]);
+            $this->app->withCommands([$command::class]);
 
             $result = $this->app->withDefaultCommand('test:default');
 

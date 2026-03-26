@@ -304,8 +304,8 @@ class Application
             throw new InvalidArgumentException(
                 t(
                     'Theme "%1$s" not found. Available themes: %2$s.',
-                    [$theme, implode(', ', array_keys(self::AVAILABLE_THEMES))]
-                )
+                    [$theme, implode(', ', array_keys(self::AVAILABLE_THEMES))],
+                ),
             );
         }
 

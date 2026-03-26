@@ -244,7 +244,7 @@ abstract class Command
             $this->name,
             $this->description,
             false,
-            $this->app
+            $this->app,
         );
 
         $this->configure($command);

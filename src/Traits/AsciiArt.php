@@ -213,7 +213,7 @@ trait AsciiArt
                 t('ASCII font "%s" not found. Available fonts: %s', [
                     $font,
                     implode(', ', array_keys(static::$asciiFonts)),
-                ])
+                ]),
             );
         }
 
@@ -344,7 +344,7 @@ trait AsciiArt
                 t('ASCII font "%s" not found. Available fonts: %s', [
                     $fontName,
                     implode(', ', array_keys(static::$asciiFonts)),
-                ])
+                ]),
             );
         }
 

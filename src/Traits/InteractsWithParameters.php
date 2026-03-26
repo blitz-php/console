@@ -159,7 +159,7 @@ trait InteractsWithParameters
     {
         $this->parameters['arguments'] = array_merge(
             $this->parameters['arguments'],
-            $arguments
+            $arguments,
         );
 
         $this->cachedParameters = [];
@@ -269,7 +269,7 @@ trait InteractsWithParameters
     {
         $this->parameters['options'] = array_merge(
             $this->parameters['options'],
-            $options
+            $options,
         );
 
         $this->cachedParameters = [];
@@ -302,7 +302,7 @@ trait InteractsWithParameters
         if ($this->cachedParameters === []) {
             $this->cachedParameters = array_merge(
                 $this->parameters['arguments'],
-                $this->parameters['options']
+                $this->parameters['options'],
             );
         }
 

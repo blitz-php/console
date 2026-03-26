@@ -2,6 +2,15 @@
 
 Toutes les modifications notables apportées à `console` seront documentées dans ce fichier.
 
+## 0.11.0 - 2026-03-26
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+### What's Changed
+
+* feat: add methods for better parameters management and enhance choices method to set the return type format by @dimtrovich in https://github.com/dimtrovich/php-console/pull/14
+
+**Full Changelog**: https://github.com/dimtrovich/php-console/compare/0.10.1...0.11.0
+
 ## 0.10.1 - 2026-02-28
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

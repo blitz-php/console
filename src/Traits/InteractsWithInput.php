@@ -110,51 +110,105 @@ trait InteractsWithInput
     /**
      * Let the user make a single choice from available choices.
      *
-     * @param string       $question Prompt question
-     * @param list<string> $choices  Available choices
-     * @param mixed|null   $default  Default value if not chosen or invalid
-     * @param bool         $case     Whether user input should be case-sensitive
+     * @param string                    $question   Prompt question
+     * @param list<string>              $choices    Available choices
+     * @param mixed|null                $default    Default value if not chosen or invalid
+     * @param bool                      $case       Whether user input should be case-sensitive
+     * @param bool                      $optional   Whether the choice is optional
+     * @param 'both'|'key'|'value'|null $returnType What to return
      *
-     * @return mixed User choice or default value
+     * @return mixed User choice based on return type or default value
+     *
+     * @example
+     * // Indexed array (numeric keys)
+     * $fruit = $this->choice(['orange', 'apple', 'pinaple']);
+     * // User enters "2" -> returns "pinaple" (value by default)
+     * @example
+     * // Associative array
+     * $juice = $this->choice([
+     *     'orange'  => "Orange juice",
+     *     'apple'   => "Apple juice",
+     *     'pinaple' => "Pinaple juice"
+     * ]);
+     * // User enters "2" -> returns "pinaple" (key by default for associative arrays)
+     * @example
+     * // Force return of value even for associative array
+     * $juice = $this->choice([
+     *     'orange'  => "Orange juice",
+     *     'apple'   => "Apple juice",
+     *     'pinaple' => "Pinaple juice"
+     * ], returnType: 'value');
+     * // User enters "2" -> returns "Pinaple juice"
      */
-    public function choice(string $question, array $choices, $default = null, bool $case = false): mixed
+    public function choice(string $question, array $choices, $default = null, bool $case = false, bool $optional = false, ?string $returnType = null): mixed
     {
+        // Get automatically default return type
+        if (func_num_args() <= 5 || $returnType === null) {
+            $isAssociative = array_keys($choices) !== range(0, count($choices) - 1);
+            $returnType    = $isAssociative ? 'key' : 'value';
+        }
+
         $this->writer->question($question)->eol();
 
         foreach ($choices as $key => $value) {
             $this->writer->choice(str_pad("  [{$key}] ", 6))->answer($value)->eol();
         }
 
-        $choice = $this->prompt(t('Choice'));
+        $choice = $this->prompt(t('Choice'), retry: $optional ? 0 : 3);
 
-        return $this->validChoice($choice, $choices, $default, $case);
+        return $this->validChoice($choice, $choices, $default, $case, $returnType);
     }
 
     /**
      * Let the user make multiple choices from available choices.
      *
-     * @param string       $question Prompt question
-     * @param list<string> $choices  Available choices
-     * @param mixed|null   $default  Default value if not chosen or invalid
-     * @param bool         $case     Whether user input should be case-sensitive
+     * @param string                    $question   Prompt question
+     * @param list<string>              $choices    Available choices
+     * @param mixed|null                $default    Default value if not chosen or invalid
+     * @param bool                      $case       Whether user input should be case-sensitive
+     * @param bool                      $optional   Whether the choice is optional
+     * @param 'both'|'key'|'value'|null $returnType What to return
      *
-     * @return list<string> User choices or default values
+     * @return list<mixed> User choices based on return type or default values
+     *
+     * @example
+     * // Indexed array - returns values by default
+     * $fruits = $this->choices(['orange', 'apple', 'pinaple']);
+     * // User enters "1,2" -> returns ['apple', 'pinaple']
+     * @example
+     * // Associative array - returns keys by default
+     * $juice = $this->choice([
+     *     'orange'  => "Orange juice",
+     *     'apple'   => "Apple juice",
+     *     'pinaple' => "Pinaple juice"
+     * ]);
+     * // User enters "0,2" -> returns ['orange', 'pinaple']
      */
-    public function choices(string $question, array $choices, $default = null, bool $case = false): array
+    public function choices(string $question, array $choices, $default = null, bool $case = false, bool $optional = false, ?string $returnType = null): array
     {
-        $this->writer->question($question)->eol();
-
-        foreach ($choices as $key => $value) {
-            $this->writer->choice(str_pad("  [{$key}] ", 6))->answer($value)->eol();
+        // Get automatically default return type
+        if (func_num_args() <= 5 || $returnType === null) {
+            $isAssociative = array_keys($choices) !== range(0, count($choices) - 1);
+            $returnType    = $isAssociative ? 'key' : 'value';
         }
 
-        $choice = $this->prompt(t('Choices (comma separated)'));
+        $this->writer->question($question)->eol();
+
+        $keys         = array_keys($choices);
+        $maxKeyLength = max(array_map('strlen', array_map('strval', $keys)));
+
+        foreach ($choices as $key => $value) {
+            $formattedKey = str_pad("[{$key}]", $maxKeyLength + 2, ' ');
+            $this->writer->choice("  {$formattedKey} ")->answer($value)->eol();
+        }
+
+        $choice = $this->prompt(t('Choices (comma separated)'), retry: $optional ? 0 : 3);
 
         if (is_string($choice)) {
             $choice = explode(',', str_replace(' ', '', $choice));
         }
 
-        $valid = array_map(fn ($option) => $this->validChoice($option, $choices, $default, $case), $choice);
+        $valid = array_map(fn ($option) => $this->validChoice($option, $choices, $default, $case, $returnType), $choice);
 
         return array_values(array_unique(array_filter($valid)));
     }
@@ -175,27 +229,74 @@ trait InteractsWithInput
     /**
      * Validate a choice against available choices.
      *
-     * @param mixed        $choice  User choice
-     * @param list<string> $choices Available choices
-     * @param mixed|null   $default Default value
-     * @param bool         $case    Whether comparison should be case-sensitive
+     * @param mixed                    $input      User input
+     * @param array<int|string, mixed> $choices    Available choices
+     * @param mixed|null               $default    Default value
+     * @param bool                     $case       Whether comparison should be case-sensitive
+     * @param 'both'|'key'|'value'     $returnType What to return
      *
      * @return mixed Validated choice or default value
      */
-    protected function validChoice($choice, array $choices, mixed $default, bool $case): mixed
+    protected function validChoice($input, array $choices, mixed $default, bool $case, string $returnType): mixed
     {
-        if (array_key_exists($choice, $choices)) {
-            return $choices[$choice];
+        if (array_key_exists($input, $choices)) {
+            return $this->formatChoiceResult($input, $choices[$input], $returnType);
         }
 
-        $fn = ['\strcasecmp', '\strcmp'][(int) $case];
+        $fn = $case ? 'strcmp' : 'strcasecmp';
 
-        foreach ($choices as $option) {
-            if ($fn($choice, $option) === 0) {
-                return $option;
+        foreach ($choices as $key => $value) {
+            if ($fn((string) $input, (string) $value) === 0) {
+                return $this->formatChoiceResult($key, $value, $returnType);
             }
         }
 
-        return $choices[$default] ?? $default;
+        if (array_is_list($choices) && is_numeric($input)) {
+            $position = (int) $input - 1;
+            if (isset($choices[$position])) {
+                $key   = $position;
+                $value = $choices[$position];
+
+                return $this->formatChoiceResult($key, $value, $returnType);
+            }
+        }
+
+        if ($default !== null) {
+            // Default can be da key or a valur
+            if (array_key_exists($default, $choices)) {
+                return $this->formatChoiceResult($default, $choices[$default], $returnType);
+            }
+
+            // Find default like value
+            foreach ($choices as $key => $value) {
+                if ($value === $default) {
+                    return $this->formatChoiceResult($key, $value, $returnType);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Format the choice result based on return type.
+     *
+     * @param int|string           $key        Selected key
+     * @param mixed                $value      Selected value
+     * @param 'both'|'key'|'value' $returnType Desired return type
+     *
+     * @return mixed Formatted result
+     */
+    protected function formatChoiceResult(int|string $key, mixed $value, string $returnType): mixed
+    {
+        if (! in_array($returnType, ['key', 'value', 'both'], true)) {
+            throw new InvalidArgumentException();
+        }
+
+        return match ($returnType) {
+            'key'   => $key,
+            'value' => $value,
+            'both'  => ['key' => $key, 'value' => $value],
+        };
     }
 }

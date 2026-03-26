@@ -421,7 +421,7 @@ trait AdvancedFeatures
      */
     public function menu(string $title, array $options, ?string $default = null): mixed
     {
-        $this->colorize($title, 'yellow');
+        $this->colorize($title, 'yellow')->eol();
 
         foreach ($options as $key => $option) {
             $this->writer->colors(sprintf('  <green>%s</end> %s', $key, $option['label'] ?? $option))->eol();

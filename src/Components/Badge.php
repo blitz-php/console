@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Dimtrovich\Console\Components;
 
+use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use Dimtrovich\Console\Icon;
 use Exception;
@@ -31,6 +32,11 @@ class Badge
     private Writer $writer;
 
     /**
+     * Colorizer instance.
+     */
+    private Color $color;
+
+    /**
      * Create a new badge instance.
      *
      * @param Writer $writer Writer instance
@@ -38,6 +44,17 @@ class Badge
     public function __construct(Writer $writer)
     {
         $this->writer = $writer;
+        $this->color  = $this->writer->colorizer();
+    }
+
+    /**
+     * Write EOL n times.
+     */
+    public function eol(int $n = 1): self
+    {
+        $this->writer->eol($n);
+
+        return $this;
     }
 
     /**
@@ -56,6 +73,19 @@ class Badge
     }
 
     /**
+     * Display an info badge with text in "info" style.
+     *
+     * @param string      $message Badge message
+     * @param string      $label   Badge label
+     * @param string|null $icon    Optional icon to display before the label
+     *                             (null = use default if enabled, false = no icon)
+     */
+    public function infoFull(string $message, string $label = 'INFO', false|string|null $icon = null): self
+    {
+        return $this->info($this->color->info($message), $label, $icon);
+    }
+
+    /**
      * Display a success badge.
      *
      * @param string      $message Badge message
@@ -68,6 +98,19 @@ class Badge
         $resolvedIcon = $this->resolveIcon($icon, Icon::SUCCESS);
 
         return $this->render($message, $label, 'boldWhiteBgGreen', $resolvedIcon);
+    }
+
+    /**
+     * Display an success badge with text in "success" style.
+     *
+     * @param string      $message Badge message
+     * @param string      $label   Badge label
+     * @param string|null $icon    Optional icon to display before the label
+     *                             (null = use default if enabled, false = no icon)
+     */
+    public function successFull(string $message, string $label = 'INFO', false|string|null $icon = null): self
+    {
+        return $this->success($this->color->ok($message), $label, $icon);
     }
 
     /**
@@ -86,6 +129,19 @@ class Badge
     }
 
     /**
+     * Display a warning badge with text in warning style.
+     *
+     * @param string      $message Badge message
+     * @param string      $label   Badge label
+     * @param string|null $icon    Optional icon to display before the label
+     *                             (null = use default if enabled, false = no icon)
+     */
+    public function warningFull(string $message, string $label = 'WARNING', false|string|null $icon = null): self
+    {
+        return $this->warning($this->color->warn($message), $label, $icon);
+    }
+
+    /**
      * Display an error badge.
      *
      * @param string      $message Badge message
@@ -98,6 +154,19 @@ class Badge
         $resolvedIcon = $this->resolveIcon($icon, Icon::ERROR);
 
         return $this->render($message, $label, 'boldWhiteBgRed', $resolvedIcon);
+    }
+
+    /**
+     * Display an error badge with text in "error" style.
+     *
+     * @param string      $message Badge message
+     * @param string      $label   Badge label
+     * @param string|null $icon    Optional icon to display before the label
+     *                             (null = use default if enabled, false = no icon)
+     */
+    public function errorFull(string $message, string $label = 'INFO', false|string|null $icon = null): self
+    {
+        return $this->error($this->color->error($message), $label, $icon);
     }
 
     /**

@@ -496,7 +496,7 @@ trait FormatsOutput
     public function bulletList(array $items, string $title = '', string $color = 'yellow'): self
     {
         if ($title !== '') {
-            $this->colorize($title, $color);
+            $this->colorize($title, $color)->eol();
         }
 
         foreach ($items as $item) {
@@ -516,7 +516,7 @@ trait FormatsOutput
     public function numberedList(array $items, string $title = '', string $color = 'yellow'): self
     {
         if ($title !== '') {
-            $this->colorize($title, $color);
+            $this->colorize($title, $color)->eol();
         }
 
         foreach ($items as $index => $item) {

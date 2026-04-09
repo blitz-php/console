@@ -120,8 +120,8 @@ trait CommandCaller
      *
      * @return mixed Command execution result
      *
-     * @throws CommandNotFoundException    If the command doesn't exist
-     * @throws InvalidArgumentException    If the command line cannot be parsed
+     * @throws CommandNotFoundException If the command doesn't exist
+     * @throws InvalidArgumentException If the command line cannot be parsed
      *
      * @example
      * ```php
@@ -145,8 +145,8 @@ trait CommandCaller
      *
      * @return mixed Command execution result
      *
-     * @throws CommandNotFoundException    If the command doesn't exist
-     * @throws InvalidArgumentException    If the command line cannot be parsed
+     * @throws CommandNotFoundException If the command doesn't exist
+     * @throws InvalidArgumentException If the command line cannot be parsed
      *
      * @example
      * ```php
@@ -169,9 +169,9 @@ trait CommandCaller
      * @param string $commandLine Raw command line string to parse
      *
      * @return array{string, list<string>, array<string, mixed>} Tuple containing:
-     *               - string: The command name
-     *               - list<string>: Indexed array of positional arguments
-     *               - array<string, mixed>: Associative array of options
+     *                                                           - string: The command name
+     *                                                           - list<string>: Indexed array of positional arguments
+     *                                                           - array<string, mixed>: Associative array of options
      *
      * @throws InvalidArgumentException If the command line cannot be parsed
      *
@@ -216,7 +216,7 @@ trait CommandCaller
         $arguments = [];
         $options   = [];
 
-        $i = 0;
+        $i     = 0;
         $total = count($tokens);
 
         while ($i < $total) {
@@ -229,7 +229,7 @@ trait CommandCaller
                 if (str_contains($optionName, '=')) {
                     [$optionName, $value] = explode('=', $optionName, 2);
                     $options[$optionName] = $this->parseOptionValue($value);
-                } elseif ($i + 1 < $total && !str_starts_with($tokens[$i + 1], '-')) {
+                } elseif ($i + 1 < $total && ! str_starts_with($tokens[$i + 1], '-')) {
                     $options[$optionName] = $this->parseOptionValue($tokens[$i + 1]);
                     $i++;
                 } else {
@@ -239,18 +239,18 @@ trait CommandCaller
             // Short option (e.g., -o)
             elseif (str_starts_with($token, '-') && strlen($token) > 1) {
                 $shortOptions = substr($token, 1);
-                $optLength = strlen($shortOptions);
+                $optLength    = strlen($shortOptions);
 
                 for ($j = 0; $j < $optLength; $j++) {
                     $optChar = $shortOptions[$j];
 
                     // Check if this short option has a value
                     // Format: -ovalue or -o value
-                    if ($j === $optLength - 1 && $i + 1 < $total && !str_starts_with($tokens[$i + 1], '-')) {
+                    if ($j === $optLength - 1 && $i + 1 < $total && ! str_starts_with($tokens[$i + 1], '-')) {
                         // Last character, can have a separated value
                         $options[$optChar] = $this->parseOptionValue($tokens[$i + 1]);
                         $i++;
-                    } elseif ($j < $optLength - 1 && ctype_alpha($shortOptions[$j + 1]) && !isset($tokens[$i + 1])) {
+                    } elseif ($j < $optLength - 1 && ctype_alpha($shortOptions[$j + 1]) && ! isset($tokens[$i + 1])) {
                         // Next character is a letter, it's a flag
                         $options[$optChar] = true;
                     } else {
@@ -291,9 +291,9 @@ trait CommandCaller
     private function parseOptionValue(string $value): mixed
     {
         // Clear quotes
-        if (strlen($value) >= 2 &&
-            (($value[0] === '"' && $value[-1] === '"') ||
-             ($value[0] === "'" && $value[-1] === "'"))) {
+        if (strlen($value) >= 2
+            && (($value[0] === '"' && $value[-1] === '"')
+             || ($value[0] === "'" && $value[-1] === "'"))) {
             $value = substr($value, 1, -1);
         }
 

@@ -31,7 +31,7 @@ use function Ahc\Cli\t;
  */
 class Console extends Application
 {
-	use CommandCaller;
+    use CommandCaller;
 
     /**
      * Container instance.

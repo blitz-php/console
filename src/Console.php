@@ -18,6 +18,7 @@ use BlitzPHP\Contracts\Container\ContainerInterface;
 use Dimtrovich\Console\Components\Logger;
 use Dimtrovich\Console\Exceptions\CommandNotFoundException;
 use Dimtrovich\Console\Exceptions\InvalidCommandException;
+use Dimtrovich\Console\Traits\CommandCaller;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
@@ -30,6 +31,8 @@ use function Ahc\Cli\t;
  */
 class Console extends Application
 {
+    use CommandCaller;
+
     /**
      * Container instance.
      */
@@ -186,88 +189,6 @@ class Console extends Application
         $this->headtitle = $headtitle;
 
         return $this;
-    }
-
-    /**
-     * Call a registered command.
-     *
-     * @param string               $commandName Command name
-     * @param array<string, mixed> $arguments   Command arguments
-     * @param array<string, mixed> $options     Command options
-     *
-     * @return mixed Command execution result
-     *
-     * @throws CommandNotFoundException If command doesn't exist
-     */
-    public function call(string $commandName, array $arguments = [], array $options = []): mixed
-    {
-        $command = $this->retrieveCommand($commandName);
-        $action  = $command['action'] ?? null;
-
-        if ($action === null) {
-            if (str_contains($commandName, '\\')) {
-                $availables = array_keys($this->_commands);
-            } else {
-                $availables = array_map(fn ($cmd) => $cmd['name'], $this->_commands);
-            }
-
-            $this->outputHelper()->showCommandNotFound($commandName, $availables);
-
-            return ($this->onExit)(127);
-        }
-
-        foreach ($options as $key => $value) {
-            $key = preg_replace('/^\-\-/', '', $key);
-            if (! isset($options[$key])) {
-                $options[$key] = $value;
-            }
-        }
-
-        return $action($arguments, $options, true);
-    }
-
-    /**
-     * Call a command silently (without output).
-     *
-     * This method executes a command and suppresses all output.
-     * Useful for calling commands programmatically within other commands.
-     *
-     * @param string               $command   Command name or FQCN
-     * @param array<string, mixed> $arguments Command arguments
-     * @param array<string, mixed> $options   Command options
-     *
-     * @return mixed Command execution result
-     *
-     * @throws CommandNotFoundException If command doesn't exist
-     *
-     * @example
-     * ```php
-     * // Clear cache without showing output
-     * $app->callSilent('cache:clear');
-     *
-     * // Run migrations silently in background
-     * $app->callSilent('migrate', ['--force' => true]);
-     * ```
-     */
-    public function callSilent(string $command, array $arguments = [], array $options = []): mixed
-    {
-        ob_start();
-
-        try {
-            $result = $this->call($command, $arguments, $options);
-
-            $key = $this->generateCacheKey($command, $arguments, $options);
-
-            // Get buffered output
-            $this->commandOutputCache[$key] = ob_get_clean() ?: '';
-
-            return $result;
-        } catch (Throwable $e) {
-            // Clean buffer on error
-            ob_end_clean();
-
-            throw $e;
-        }
     }
 
     /**

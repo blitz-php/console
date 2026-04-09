@@ -2,6 +2,18 @@
 
 Toutes les modifications notables apportées à `console` seront documentées dans ce fichier.
 
+## 0.12.0 - 2026-04-09
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+### What's Changed
+
+#### Enhancements
+
+* feat: improve argument handling in command execution by @dimtrovich in https://github.com/dimtrovich/php-console/pull/17
+* feat: add CommandCaller trait for command execution capabilities by @dimtrovich in https://github.com/dimtrovich/php-console/pull/18
+
+**Full Changelog**: https://github.com/dimtrovich/php-console/compare/0.11.1...0.12.0
+
 ## 0.11.0 - 2026-03-26
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->

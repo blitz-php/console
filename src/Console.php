@@ -409,12 +409,19 @@ class Console extends Application
         $action = function (?array $arguments = [], ?array $options = [], ?bool $suppress = false) use ($instance, $command, $app) {
             $this->name();
 
-            $parameters = $command->values();
-            $arguments  = $arguments === [] || $arguments === null ? $command->args() : $arguments;
-            $options    = $options === []   || $options === null ? array_diff_key($parameters, $arguments) : $options;
+			$args       = $command->args();
+			$argsNames  = array_keys($args);
+			$parameters = $command->values();
+			$arguments  = $arguments === [] || $arguments === null ? $args : $arguments;
+			$options    = $options   === []   || $options === null ? array_diff_key($parameters, $arguments) : $options;
 
             foreach ($arguments as $key => $value) {
-                $arguments[$app->kebabize($key)] = $value;
+				if (is_int($key)) {
+					$key = $argsNames[$key] ?? $key;
+				}
+
+				$key             = is_string($key) ? $app->kebabize($key) : $key;
+				$arguments[$key] = $value;
             }
 
             foreach ($options as $key => $value) {

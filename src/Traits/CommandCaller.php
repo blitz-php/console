@@ -205,7 +205,7 @@ trait CommandCaller
             } else {
                 throw new InvalidArgumentException(sprintf(
                     'Unable to parse the input near "... %s ...".',
-                    substr($commandLine, $cursor, 10)
+                    substr($commandLine, $cursor, 10),
                 ));
             }
 

@@ -262,7 +262,14 @@ abstract class Command
      */
     protected function configure(BaseCommand $command): void
     {
-        $command->inGroup($this->group)
+        if (empty($group = $this->group)) {
+            if (str_contains($this->name, ':')) {
+                [$group] = explode(':', $this->name);
+                $group   = ucfirst($group);
+            }
+        }
+
+        $command->inGroup($group)
             ->usage($this->usage)
             ->version($this->version)
             ->alias($this->alias);

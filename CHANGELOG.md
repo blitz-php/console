@@ -2,6 +2,18 @@
 
 Toutes les modifications notables apportées à `console` seront documentées dans ce fichier.
 
+## 0.12.1 - 2026-05-08
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+### What's Changed
+
+#### Others (Only for checking. Remove this category)
+
+* patch: get group dynamically from command name by @dimtrovich in https://github.com/dimtrovich/php-console/pull/19
+* cs-fix by @dimtrovich in https://github.com/dimtrovich/php-console/pull/21
+
+**Full Changelog**: https://github.com/dimtrovich/php-console/compare/0.12.0...0.12.1
+
 ## 0.12.0 - 2026-04-09
 
 <!-- Release notes generated using configuration in .github/release.yml at main -->
